@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "cli/config.hpp"
+#include "cli/parser.hpp"
 
 int main(int argc, char* argv[]) {
     std::vector<std::string> args(argv, argv + argc);
@@ -11,26 +12,18 @@ int main(int argc, char* argv[]) {
     
     surge::cli::Config config;
 
-    std::cout << "Default configuration:\n";
-    std::cout << "\tURL: " << config.url << " (empty)\n";
-    std::cout << "\tConcurrency: " << config.concurrency << "\n";
-    std::cout << "\tRequests: " << config.requests << "\n";
-    std::cout << "\tDuration: " << config.duration_seconds << "s\n";
-
-    if (config.method) {
-        std::cout << "\tMethod: " << *config.method << "\n";
-    } else {
-        std::cout << "\tMethod not set\n";
+    if (!surge::cli::parse_arguments(args, config)) {
+        return 1;
     }
 
-    std::cout << "\tVerbose: " << (config.verbose ? "true" : "false") << "\n";
-
-    config.url = "http://localhost:8080";
-    config.concurrency = 50;
-
-    std::cout << "\nAfter modification:\n";
-    std::cout << "\tURL: " << config.url << "\n";
+    // Print parsed configuration
+    std::cout << "\nConfiguration loaded:\n";
+    std::cout << "\tURL:         " << config.url << "\n";
     std::cout << "\tConcurrency: " << config.concurrency << "\n";
+    std::cout << "\tRequests:    " << config.requests << "\n";
+    std::cout << "\tVerbose:     " << (config.verbose ? "yes" : "no") << "\n";
+    
+    std::cout << "\n[Load test would run here]\n";
 
     return 0;
 }
