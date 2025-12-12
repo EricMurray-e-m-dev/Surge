@@ -10,6 +10,7 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 add_executable(surge
     src/main.cpp
     src/cli/parser.cpp
+    src/http/client.cpp
 )
 
 target_include_directories(surge PRIVATE ${CMAKE_SOURCE_DIR}/src)
