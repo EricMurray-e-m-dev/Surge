@@ -4,11 +4,6 @@
 
 // System headers for socket programming
 #include <chrono>
-#include <cstddef>
-#include <cstdint>
-#include <string>
-#include <sys/_endian.h>
-#include <sys/_types/_ssize_t.h>
 #include <sys/socket.h>     // socket(), connect(), send(), recv()
 #include <netinet/in.h>     // sockaddr_in struct
 #include <arpa/inet.h>      // inet_addr()
