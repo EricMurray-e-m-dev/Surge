@@ -1,5 +1,7 @@
 #include "cli/parser.hpp"
 #include <iostream>
+#include <stdexcept>
+#include <string>
 #include <string_view>
 
 namespace surge::cli {
@@ -67,6 +69,25 @@ bool parse_arguments(const std::vector<std::string>& args, Config& config) {
         } else if (arg == "--verbose" || arg == "-v") {
             config.verbose = true;
             
+        } else if (arg == "--duration" || arg == "-d") {
+            if (i + 1 >= args.size()) {
+                std::cerr << "Error: --duration requires a value\n";
+                return false;
+            }
+            try {
+                int value = std::stoi(args[++i]);
+                if (value <= 0) {
+                    std::cerr << "Error: duration must be positive\n";
+                    return false;
+                }
+                config.duration_seconds = static_cast<std::uint32_t>(value);
+            } catch (const std::invalid_argument&) {
+                std::cerr << "Error: invalid argument\n";
+                return false;
+            } catch (const std::out_of_range&) {
+                std::cerr << "Error: duration value too large";
+                return false;
+            }
         } else {
             std::cerr << "Error: unknown argument '" << arg << "'\n";
             std::cerr << "Use --help for usage information\n";
@@ -91,6 +112,7 @@ OPTIONS:
     --url <url>              Target URL to test (required)
     -c, --concurrency <n>    Number of concurrent workers (default: 10)
     -r, --requests <n>       Total requests to make (default: 100)
+    -d, --duration <n>       Duration in seconds
     -v, --verbose            Enable verbose output
     -h, --help               Show this help message
 
@@ -98,6 +120,7 @@ EXAMPLES:
     surge --url http://localhost:8080
     surge --url http://api.example.com/users -c 50 -r 1000
     surge --url http://localhost:3000/api/test -v
+    surge --url http://example.com/ -c 50 -d 120
 )";
 }
 

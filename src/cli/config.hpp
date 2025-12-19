@@ -14,7 +14,7 @@ namespace surge::cli {
         std::uint32_t concurrency = 10;
 
         // Total requests to make
-        std::uint32_t requests = 100;
+        std::uint32_t requests = 0;
 
         // Duration limit in seconds 
         std::uint32_t duration_seconds = 0;

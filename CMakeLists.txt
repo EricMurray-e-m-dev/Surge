@@ -13,6 +13,7 @@ add_executable(surge
     src/http/client.cpp
     src/core/thread_pool.cpp
     src/stats/collector.cpp
+    src/core/engine.cpp
 )
 
 target_include_directories(surge PRIVATE ${CMAKE_SOURCE_DIR}/src)
