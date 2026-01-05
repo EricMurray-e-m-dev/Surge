@@ -79,15 +79,9 @@ namespace surge::core {
 
     // Wait for load test to complete
     void Engine::wait_for_completion() {
-        // if request based, wait for all tasks to finish
-        if (config_.requests > 0 && config_.duration_seconds == 0) {
-            // Request based, pool knows when all tasks are done
-            pool_->wait_for_completion();
-            return;
-        }
-
+    if (config_.duration_seconds > 0) {
+        // Duration-based: poll until deadline, then wait for workers
         while (running_ && !stop_requested_) {
-            // Check if deadline reached
             if (deadline_.has_value()) {
                 auto now = std::chrono::steady_clock::now();
                 if (now >= *deadline_) {
@@ -95,10 +89,17 @@ namespace surge::core {
                     break;
                 }
             }
-            // Sleep for 100ms to avoid wasting CPU
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
+        
+        // Wait for workers to see the deadline and exit their loops
+        pool_->wait_for_completion();
+        
+    } else if (config_.requests > 0) {
+        // Request-based: just wait for all tasks
+        pool_->wait_for_completion();
     }
+}
 
     // Run the load test (blocking)
     Results Engine::run() {
